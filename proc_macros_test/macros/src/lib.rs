@@ -61,17 +61,9 @@ pub fn derive_to_js(input: TokenStream) -> TokenStream {
 
             format!(r#"
         // Código JavaScript generado automáticamente
-        export const {} = {{
+        export const {} = Object.freeze({{
             {}
-        }};
-
-        export function fromRust{}(value) {{
-            return {}[value];
-        }}
-
-        export function toRust{}(value) {{
-            return Object.entries({}).find(([_, v]) => v === value)[0];
-        }}
+        }});
         "#,
                 name,
                 variant_names
@@ -79,7 +71,6 @@ pub fn derive_to_js(input: TokenStream) -> TokenStream {
                     .map(|v| format!("{}: '{}'", v, v))
                     .collect::<Vec<_>>()
                     .join(",\n    "),
-                name, name, name, name
             )
         },
         _ => return syn::Error::new_spanned(name, "ToJS solo funciona con enums o structs").to_compile_error().into()
